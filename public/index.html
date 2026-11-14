@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Prepare and share your hackathon demo handoff.">
+<title>Demo Relay</title>
+<style>
+:root{color-scheme:dark;--bg:#111313;--panel:#191c1b;--line:#343a35;--ink:#f0f1e8;--muted:#adb7ad;--lime:#d8fa7c}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Inter",system-ui,sans-serif}
+.wrap{max-width:1120px;margin:auto;padding:0 28px}
+header{border-bottom:1px solid var(--line)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:16px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:750}
+.mark{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--lime);color:#1a2110;font-size:22px}
+small,.muted{color:var(--muted)}
+.hero{padding:59px 0 30px}
+h1,h2,p{margin:0}
+h1{font-size:clamp(50px,8vw,100px);line-height:1;letter-spacing:-.075em}
+.hero p{margin-top:18px;color:var(--muted);max-width:520px}
+.grid{display:grid;grid-template-columns:1.06fr 1fr;gap:20px;align-items:start;padding-bottom:32px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+h2{font-size:22px;letter-spacing:-.03em}
+.panel-head{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-bottom:18px}
+label.field{display:grid;gap:6px;margin-top:12px;font-size:13px;font-weight:650}
+input:not([type=checkbox]),textarea{width:100%;background:#121514;border:1px solid var(--line);color:var(--ink);font:inherit;padding:10px 12px;border-radius:8px}
+textarea{resize:vertical;min-height:76px}
+input::placeholder,textarea::placeholder{color:#8c988e}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{cursor:pointer;font:inherit;font-size:13px;font-weight:700;border-radius:8px;padding:8px 12px;background:none;color:var(--ink);border:1px solid var(--line)}
+button:hover{border-color:var(--lime)}
+button.primary{background:var(--lime);color:#18200e;border:0;padding:10px 15px}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+.checklist{display:grid;gap:0}
+.check{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px}
+.check input{accent-color:var(--lime);width:17px;height:17px;margin:0}
+progress{display:block;width:100%;height:8px;appearance:none;border:0;background:#333c32;border-radius:6px;overflow:hidden;margin-bottom:8px}
+progress::-webkit-progress-bar{background:#333c32}progress::-webkit-progress-value{background:var(--lime)}progress::-moz-progress-bar{background:var(--lime)}
+.count{color:var(--lime);font:600 13px ui-monospace,monospace}
+.preview{margin-top:22px}
+pre{margin:0 0 12px;background:#121514;border:1px solid var(--line);padding:14px;border-radius:8px;font:13px/1.6 ui-monospace,monospace;color:#d2dbd0;white-space:pre-wrap;overflow-wrap:anywhere}
+.actions{display:flex;align-items:center;gap:12px}
+@media(max-width:720px){.wrap{padding-inline:16px}.hero{padding-top:37px}.grid{grid-template-columns:1fr}.panel{padding:18px}}
+@media(max-width:360px){.pair{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand"><span class="mark" aria-hidden="true">↗</span>Demo Relay</div><small id="saved">Saved in this browser</small></div></header>
+<main class="wrap">
+<section class="hero"><h1>Demo Relay</h1><p>Get your hackathon demo ready and give the next teammate everything they need to run it.</p></section>
+<div class="grid">
+<section class="panel" aria-labelledby="details"><div class="panel-head"><h2 id="details">Demo details</h2><button id="sample" type="button">Load example</button></div>
+<label class="field">Project name<input id="project" maxlength="100" placeholder="e.g. Repair Map"></label>
+<div class="pair"><label class="field">Presenter<input id="presenter" maxlength="100" placeholder="Name"></label><label class="field">Backup owner<input id="owner" maxlength="100" placeholder="Name"></label></div>
+<label class="field">Live demo URL<input id="demo" type="url" maxlength="1000" placeholder="https://"></label>
+<label class="field">Repository URL<input id="repo" type="url" maxlength="1000" placeholder="https://github.com/…"></label>
+<label class="field">Fallback plan<textarea id="fallback" maxlength="1000" placeholder="What should the team show if the live demo fails?"></textarea></label>
+<label class="field">Demo run order<textarea id="order" maxlength="2000" placeholder="List the steps from opening the app to showing the result."></textarea></label>
+</section>
+<section class="panel" aria-labelledby="readiness">
+<div class="panel-head"><h2 id="readiness">Readiness checklist</h2><span class="count" id="count" aria-live="polite"></span></div>
+<progress id="progress" aria-label="Demo readiness"></progress>
+<div class="checklist" id="checks"></div>
+<div class="preview"><div class="panel-head"><h2 id="handoff-label">Team handoff</h2></div><pre id="handoff" tabindex="0" aria-labelledby="handoff-label"></pre><div class="actions"><button class="primary" id="copy" type="button">Copy handoff</button><small id="status" role="status"></small></div><form id="share-form" class="preview"><button id="share" type="submit">Create share link</button><p class="muted"><small>Anyone with the link can view this snapshot.</small></p><label class="field" id="share-result" hidden>Share link<input id="share-url" readonly></label><small id="share-status" role="status"></small></form></div>
+</section>
+</div>
+</main>
+<script>
+const key = 'demo-relay-v1';
+const items = ['Live demo opens in a private window', 'Demo data is ready', 'Presenter has rehearsed the run order', 'Backup owner can access the fallback'];
+const fields = ['project', 'presenter', 'owner', 'demo', 'repo', 'fallback', 'order'].map(id => document.getElementById(id));
+const get = id => document.getElementById(id);
+let saved = {};
+try {
+  if (!new URLSearchParams(location.search).has('handoff')) saved = JSON.parse(localStorage.getItem(key)) || {};
+} catch {}
+const checks = items.map((item, index) => {
+  const label = document.createElement('label');
+  label.className = 'check';
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.checked = saved.checked?.[index] === true;
+  input.addEventListener('change', update);
+  label.append(input, document.createTextNode(item));
+  get('checks').append(label);
+  return input;
+});
+for (const field of fields) {
+  field.value = typeof saved[field.id] === 'string' ? saved[field.id] : '';
+  field.addEventListener('input', update);
+}
+function currentState() {
+  const state = Object.fromEntries(fields.map(field => [field.id, field.value]));
+  state.checked = checks.map(box => box.checked);
+  return state;
+}
+function update() {
+  const state = currentState();
+  const done = state.checked.filter(Boolean).length;
+  get('count').textContent = done + ' / ' + items.length + ' ready';
+  get('progress').max = items.length;
+  get('progress').value = done;
+  const value = id => state[id].trim() || 'Pending';
+  get('handoff').textContent = [
+    state.project.trim() || 'Untitled demo',
+    'Presenter: ' + value('presenter'),
+    'Backup owner: ' + value('owner'),
+    'Live demo: ' + value('demo'),
+    'Repository: ' + value('repo'),
+    '',
+    'Fallback: ' + value('fallback'),
+    'Run order: ' + value('order'),
+    '',
+    ...items.map((item, index) => (state.checked[index] ? '[x] ' : '[ ] ') + item)
+  ].join('\n');
+  get('status').textContent = '';
+  if (new URLSearchParams(location.search).has('handoff')) return;
+  try { localStorage.setItem(key, JSON.stringify(state)); }
+  catch { get('saved').textContent = 'Browser storage unavailable'; }
+}
+get('sample').addEventListener('click', () => {
+  if ((fields.some(field => field.value.trim()) || checks.some(box => box.checked)) &&
+      !window.confirm('Replace the current handoff with the example?')) return;
+  const example = ['Repair Map', 'Riya', 'Dev', 'https://example.com/demo', 'https://example.com/repository', 'Dev opens the fallback recording from the team folder.', '1. Open the map.\n2. Report a broken streetlight.\n3. Show the report on the map.'];
+  fields.forEach((field, index) => { field.value = example[index]; });
+  checks.forEach((box, index) => { box.checked = index < 2; });
+  update();
+});
+get('copy').addEventListener('click', async () => {
+  const preview = get('handoff');
+  try {
+    await navigator.clipboard.writeText(preview.textContent);
+    get('status').textContent = 'Copied.';
+  } catch {
+    const range = document.createRange();
+    range.selectNodeContents(preview);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    get('status').textContent = 'Text selected. Press Ctrl+C or Cmd+C.';
+  }
+});
+update();
+
+const shareId = new URLSearchParams(location.search).get('handoff');
+const shareStatus = get('share-status');
+const shareButton = get('share');
+if (shareId !== null) {
+  get('sample').hidden = true;
+  get('share-form').querySelector('p').hidden = true;
+  shareButton.hidden = true;
+  get('saved').textContent = 'Read-only shared snapshot';
+  get('copy').disabled = true;
+  for (const field of [...fields, ...checks]) field.disabled = true;
+  shareStatus.textContent = 'Loading shared handoff…';
+  loadSnapshot();
+}
+
+async function loadSnapshot() {
+  try {
+    if (!/^[a-f0-9]{32}$/.test(shareId)) throw new Error();
+    const response = await fetch('/api/handoffs/' + shareId);
+    if (!response.ok) throw new Error();
+    const state = await response.json();
+    for (const field of fields) field.value = state[field.id];
+    checks.forEach((box, index) => { box.checked = state.checked[index]; });
+    update();
+    get('copy').disabled = false;
+    shareStatus.textContent = '';
+  } catch {
+    shareStatus.textContent = 'This shared handoff could not be opened.';
+  }
+}
+
+get('share-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  if (shareId !== null || shareButton.disabled) return;
+  get('share-result').hidden = true;
+  const state = currentState();
+  if (!state.project.trim()) {
+    shareStatus.textContent = 'Enter a project name first.';
+    get('project').focus();
+    return;
+  }
+  shareButton.disabled = true;
+  shareStatus.textContent = 'Saving snapshot…';
+  try {
+    const response = await fetch('/api/handoffs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state)
+    });
+    if (!response.ok) throw new Error();
+    const { id } = await response.json();
+    const url = new URL(location.pathname, location.origin);
+    url.searchParams.set('handoff', id);
+    get('share-url').value = url.href;
+    get('share-result').hidden = false;
+    get('share-url').select();
+    shareStatus.textContent = 'Snapshot saved. Copy the selected link to share it.';
+  } catch {
+    shareStatus.textContent = 'Could not create a link. Try again.';
+  } finally {
+    shareButton.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

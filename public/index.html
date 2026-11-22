@@ -116,6 +116,9 @@ function update() {
     ...items.map((item, index) => (state.checked[index] ? '[x] ' : '[ ] ') + item)
   ].join('\n');
   get('status').textContent = '';
+  get('share-result').hidden = true;
+  get('share-url').value = '';
+  get('share-status').textContent = '';
   if (new URLSearchParams(location.search).has('handoff')) return;
   try { localStorage.setItem(key, JSON.stringify(state)); }
   catch { get('saved').textContent = 'Browser storage unavailable'; }
